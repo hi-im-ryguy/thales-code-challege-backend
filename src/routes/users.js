@@ -7,16 +7,13 @@ module.exports = app => {
   let userCount = usersCopy.length;
 
   const router = express.Router();
-  router.delete('/food/${id}', (req, res) => {
-    console.log(req.query);
+  router.delete('/food/', (req, res) => {
+    const idToDelete = req.query.id;
     try {
       validationResult(req).throw();
       userCount -= 1;
       usersCopy = usersCopy.filter(x => {
-        return x.id != id;
-      })
-      res.json({
-        success: userCount
+        return x.id != idToDelete;
       })
       res.send({
         success: true
@@ -25,8 +22,12 @@ module.exports = app => {
       res.status(422).send(err.toString());
     }
   });
-  router.get('/foods', (req, res) => {
-    const sorted = usersCopy.sort((a, b) => a.id - b.id);
+  router.get('/foods/', (req, res) => {
+    const sorted = usersCopy.sort((a, b) => {
+      if(a.hero_name < b.hero_name) { return -1; }
+      if(a.hero_name > b.hero_name) { return 1; }
+      return 0;
+    });
     var normalizedArray = [];
     var uniqueNamesIndex = [];
     for (var i = 0; i < sorted.length; i++) {
@@ -67,7 +68,7 @@ module.exports = app => {
     normalizedArray = JSON.stringify(normalizedArray)
     res.send(normalizedArray);
   });
-  router.post('/food', [
+  router.post('/food/', [
     check('hero_name').exists(),
     check('first_name').exists(),
     check('last_name').exists()

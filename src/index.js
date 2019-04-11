@@ -9,7 +9,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-const port = process.env.NODE_ENV === 'development' ? 3001 : 3010;
+const port = process.env.NODE_ENV === 'development' ? 3001 : 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // x-www-form-urlencoded
@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // x-www-form-urlencoded
 require('./routes/health')(app);
 require('./routes/users')(app);
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log(`listening on ${port}`);
 })
 

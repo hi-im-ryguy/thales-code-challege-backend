@@ -7,11 +7,23 @@ module.exports = app => {
   let userCount = usersCopy.length;
 
   const router = express.Router();
-  router.delete('/food', (req, res) => {
+  router.delete('/food/${id}', (req, res) => {
     console.log(req.query);
-    res.send({
-      success: true
-    })
+    try {
+      validationResult(req).throw();
+      userCount -= 1;
+      usersCopy = usersCopy.filter(x => {
+        return x.id != id;
+      })
+      res.json({
+        success: userCount
+      })
+      res.send({
+        success: true
+      })
+    } catch (err) {
+      res.status(422).send(err.toString());
+    }
   });
   router.get('/foods', (req, res) => {
     const sorted = usersCopy.sort((a, b) => a.id - b.id);

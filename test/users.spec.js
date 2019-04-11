@@ -17,7 +17,7 @@ describe('Server should be able to perform "/users/*" operation', () => {
       res.should.have.status(200);
       res.should.be.a('object');
       res.body.should.be.a('array');
- 
+
       done();
     })
   });

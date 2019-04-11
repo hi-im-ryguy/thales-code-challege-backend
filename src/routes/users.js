@@ -8,15 +8,52 @@ module.exports = app => {
 
   const router = express.Router();
   router.delete('/food', (req, res) => {
-    console.log(req.query); 
+    console.log(req.query);
     res.send({
       success: true
     })
   });
   router.get('/foods', (req, res) => {
     const sorted = usersCopy.sort((a, b) => a.id - b.id);
+    var normalizedArray = [];
+    var uniqueNamesIndex = [];
+    for (var i = 0; i < sorted.length; i++) {
+      if (normalizedArray.some((element) =>
+      element.hero_name === sorted[i]['hero_name']
+      && element.first_name === sorted[i]['first_name']
+      && element.last_name === sorted[i]['last_name'])) {
 
-    res.send(sorted);
+        var myIndex = uniqueNamesIndex[uniqueNamesIndex.findIndex((element) =>
+          element.hero_name === sorted[i]['hero_name']
+          && element.first_name === sorted[i]['first_name']
+          && element.last_name === sorted[i]['last_name']
+        )]['my_index']
+
+        normalizedArray[myIndex]['favorite_foods'].push({
+          'id': sorted[i]['id'],
+          'food': sorted[i]['favorite_food']
+        })
+      }
+      else {
+        normalizedArray.push({
+          'hero_name': sorted[i]['hero_name'],
+          'first_name': sorted[i]['first_name'],
+          'last_name': sorted[i]['last_name'],
+          'favorite_foods': [{
+            'id': sorted[i]['id'],
+            'food': sorted[i]['favorite_food']
+          }],
+        })
+        uniqueNamesIndex.push({
+          'my_index': normalizedArray.length - 1,
+          'hero_name': sorted[i]['hero_name'],
+          'first_name': sorted[i]['first_name'],
+          'last_name': sorted[i]['last_name']
+        })
+      }
+    }
+    normalizedArray = JSON.stringify(normalizedArray)
+    res.send(normalizedArray);
   });
   router.post('/food', [
     check('hero_name').exists(),
